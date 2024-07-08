@@ -31,7 +31,7 @@ jobs:
       # - name: Dependabot Security Check
       #   uses: dependabot/dependabot-core/dependabot-gradle@2.0.0
       #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     github_token: ${{ secrets.TOKEN_GITHUB }}
 
       - name: Snyk setup
         run: |
@@ -40,7 +40,7 @@ jobs:
           snyk auth ${{ secrets.SNYK_TOKEN}}
       
       - name: Snyk Security Scan
-        run: npx snyk test --all-projects
+        run: snyk test --all-projects
       
       # - name: SonarQube Scan
       #   uses: sonarsource/sonarcloud-github-action@v1
@@ -57,32 +57,32 @@ jobs:
       # - name: Publish to Nexus
       #   run: mvn deploy --file pom.xml
         
-      # - name: Docker Build and Push
-      #   env:
-      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      #   run: |
-      #     docker build -t my-spring-app .
-      #     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-      #     docker tag my-spring-app:latest my-docker-hub-username/my-spring-app:latest
-      #     docker push my-docker-hub-username/my-spring-app:latest
+      - name: Docker Build and Push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker build -t my-spring-app .
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker tag my-spring-app:latest my-docker-hub-username/my-spring-app:latest
+          docker push my-docker-hub-username/my-spring-app:latest
 
   notifications:
     runs-on: ubuntu-latest
     needs: build
     if: failure()
 
-    steps:
-      - name: Send email on failure
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.example.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: 'GitHub Actions Failure: ${{ github.repository }}'
-          body: |
-            The GitHub Actions workflow failed for the repository: ${{ github.repository }}.
-            Please check the logs for details.
+    # steps:
+    #   - name: Send email on failure
+    #     uses: dawidd6/action-send-mail@v3
+    #     with:
+    #       server_address: smtp.example.com
+    #       server_port: 587
+    #       username: ${{ secrets.EMAIL_USERNAME }}
+    #       password: ${{ secrets.EMAIL_PASSWORD }}
+    #       subject: 'GitHub Actions Failure: ${{ github.repository }}'
+    #       body: |
+    #         The GitHub Actions workflow failed for the repository: ${{ github.repository }}.
+    #         Please check the logs for details.
 
-          to: ${{ github.actor }}@example.com
+    #       to: ${{ github.actor }}@example.com
