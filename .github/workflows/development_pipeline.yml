@@ -67,10 +67,10 @@ jobs:
           docker tag my-spring-app:latest my-docker-hub-username/my-spring-app:latest
           docker push my-docker-hub-username/my-spring-app:latest
 
-  notifications:
-    runs-on: ubuntu-latest
-    needs: build
-    if: failure()
+  # notifications:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: failure()
 
     # steps:
     #   - name: Send email on failure
