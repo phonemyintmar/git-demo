@@ -1,7 +1,9 @@
 name: CI/CD Pipeline
 
 on:
-  workflow_dispatch
+  push:
+    paths:
+      - '.github/workflows/development_pipeline.yml'
   # push:
   #   branches:
   #     - main
@@ -34,6 +36,7 @@ jobs:
       - name: Snyk setup
         run: |
           npm install -g snyk
+          chmod +x mvnw
           snyk auth ${{ secrets.SNYK_TOKEN}}
       
       - name: Snyk Security Scan
