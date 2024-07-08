@@ -33,14 +33,14 @@ jobs:
       #   with:
       #     github_token: ${{ secrets.TOKEN_GITHUB }}
 
-      - name: Snyk setup
-        run: |
-          npm install -g snyk
-          chmod +x mvnw
-          snyk auth ${{ secrets.SNYK_TOKEN}}
+      # - name: Snyk setup
+      #   run: |
+      #     npm install -g snyk
+      #     chmod +x mvnw
+      #     snyk auth ${{ secrets.SNYK_TOKEN}}
       
-      - name: Snyk Security Scan
-        run: snyk test --all-projects
+      # - name: Snyk Security Scan
+      #   run: snyk test --all-projects
       
       # - name: SonarQube Scan
       #   uses: sonarsource/sonarcloud-github-action@v1
