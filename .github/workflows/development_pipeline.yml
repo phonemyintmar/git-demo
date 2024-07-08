@@ -90,4 +90,4 @@ jobs:
     #         The GitHub Actions workflow failed for the repository: ${{ github.repository }}.
     #         Please check the logs for details.
 
-    #       to: ${{ github.actor }}@example.com
+    #       to: ${{ github.actor }}@gmail.com
