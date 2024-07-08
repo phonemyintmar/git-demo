@@ -1,0 +1,27 @@
+name: Snyk Security Scan
+
+on:
+  workflow_dispatch
+  
+jobs:
+  snyk_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install  # Replace with your package manager command if needed
+
+    - name: Run Snyk
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: npx snyk test --all-projects --json > snyk_results.json
+
+    - name: Upload results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: snyk-results
+        path: snyk_results.json
