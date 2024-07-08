@@ -1,0 +1,88 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    paths:
+      - '.github/workflows/development_pipeline.yml'
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml    
+        
+      - name: Run Unit Tests
+        run: mvn test --file pom.xml
+      
+      # - name: Dependabot Security Check
+      #   uses: dependabot/dependabot-core/dependabot-gradle@2.0.0
+      #   with:
+      #     github_token: ${{ secrets.TOKEN_GITHUB }}
+
+      - name: Snyk setup
+        run: |
+          npm install -g snyk
+          chmod +x mvnw
+          snyk auth ${{ secrets.SNYK_TOKEN}}
+      
+      - name: Snyk Security Scan
+        run: snyk test --all-projects
+      
+      # - name: SonarQube Scan
+      #   uses: sonarsource/sonarcloud-github-action@v1
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     organization: '<your-organization>'
+      #     project_key: '<your-project-key>'
+      
+      # - name: Code Review with AI (example)
+      #   uses: github/codeql-action@v2
+      #   with:
+      #     # Configuration options for CodeQL
+      
+      # - name: Publish to Nexus
+      #   run: mvn deploy --file pom.xml
+        
+      - name: Docker Build and Push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker build -t my-spring-app .
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker tag demo-app:latest phonemyint03/demo-app:latest
+          docker push phonemyint03/test
+
+  # notifications:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: failure()
+
+    # steps:
+    #   - name: Send email on failure
+    #     uses: dawidd6/action-send-mail@v3
+    #     with:
+    #       server_address: smtp.example.com
+    #       server_port: 587
+    #       username: ${{ secrets.EMAIL_USERNAME }}
+    #       password: ${{ secrets.EMAIL_PASSWORD }}
+    #       subject: 'GitHub Actions Failure: ${{ github.repository }}'
+    #       body: |
+    #         The GitHub Actions workflow failed for the repository: ${{ github.repository }}.
+    #         Please check the logs for details.
+
+    #       to: ${{ github.actor }}@example.com
