@@ -64,10 +64,10 @@ jobs:
         run: |
           export DOCKER_BUILDKIT=0
           export COMPOSE_DOCKER_CLI_BUILD=0
-          docker build -t my-spring-app .
-          docker login -u DOCKER_USERNAME -p DOCKER_PASSWORD
-          docker tag demo-app:latest phonemyint03/demo-app:latest
-          docker push phonemyint03/test
+          docker build -t $DOCKER_USERNAME/demo-app .
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker tag demo-app:latest $DOCKER_USERNAME/demo-app:latest
+          docker push $DOCKER_USERNAME/test
 
   # notifications:
   #   runs-on: ubuntu-latest
