@@ -31,8 +31,10 @@ jobs:
       #   with:
       #     github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Snyk auth
-        run: npx snyk auth ${{ secrets.SNYK_TOKEN}}
+      - name: Snyk setup
+        run: |
+          npm install -g snyk
+          snyk auth ${{ secrets.SNYK_TOKEN}}
       
       - name: Snyk Security Scan
         run: npx snyk test --all-projects
