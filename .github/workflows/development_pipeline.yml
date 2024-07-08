@@ -68,7 +68,7 @@ jobs:
           export DOCKER_BUILDKIT=0
           export COMPOSE_DOCKER_CLI_BUILD=0
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/demo-app .
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p $DOCKER_PASSWORD
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
           docker tag demo-app:latest ${{ secrets.DOCKERHUB_USERNAME }}/demo-app:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/demo-app
 
