@@ -64,8 +64,8 @@ jobs:
         run: |
           docker build -t my-spring-app .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker tag my-spring-app:latest my-docker-hub-username/my-spring-app:latest
-          docker push my-docker-hub-username/my-spring-app:latest
+          docker tag demo-app:latest phonemyint03/demo-app:latest
+          docker push phonemyint03/test
 
   # notifications:
   #   runs-on: ubuntu-latest
