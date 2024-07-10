@@ -25,39 +25,41 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml    
         
-      # - name: Run Unit Tests
-      #   run: mvn test --file pom.xml
-      
-      # - name: Dependabot Security Check
-      #   uses: dependabot/dependabot-core/dependabot-gradle@2.0.0
-      #   with:
-      #     github_token: ${{ secrets.TOKEN_GITHUB }}
+      - name: Run Unit Tests
+        run: mvn test --file pom.xml
 
-      # - name: Snyk setup
-      #   run: |
-      #     npm install -g snyk
-      #     chmod +x mvnw
-      #     snyk auth ${{ secrets.SNYK_TOKEN}}
+      - name: Snyk setup
+        run: |
+          npm install -g snyk
+          chmod +x mvnw
+          snyk auth ${{ secrets.SNYK_TOKEN}}
       
-      # - name: Snyk Security Scan
-      #   run: snyk test --all-projects
+      - name: Snyk Security Scan
+        run: snyk test --all-projects
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: java
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: 17
+
+      - name: Build the project
+        run: ./mvnw clean package
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
       
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarcloud-github-action@v1
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     organization: '<your-organization>'
-      #     project_key: '<your-project-key>'
-      
-      # - name: Code Review with AI (example)
-      #   uses: github/codeql-action@v2
-      #   with:
-      #     # Configuration options for CodeQL
       
       - name: Publish to Nexus
         run: |
           echo "Deploy to nexus or jfrog (repository managers)"
-          mvn deploy --file pom.xml
+          echo "This step is skipped for now"
+          # mvn deploy --file pom.xml
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
