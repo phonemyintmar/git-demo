@@ -24,18 +24,15 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Snyk Security Scan
-        id: snyk
-        uses: snyk/actions/cli@v2
-        with:
-          args: test
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
+        run: snyk test --all-projects > snyk_report.txt || true
 
-      - name: CodeQL Analysis
+      - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: java
+
+      - name: Build the project
+        run: ./mvnw clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
@@ -51,15 +48,16 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: codeql-report
-          path: codeql_reports
+          name: codeql-results
+          path: ${{ github.workspace }}/codeql-database
 
-      - name: Notify via Telegram
+      - name: Notify via Telegram on Failure
         if: failure()
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
+          REPORT_URL="${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
           curl -s -X POST https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage \
           -d chat_id=${{ env.TELEGRAM_CHAT_ID }} \
-          -d text="The weekly build of the Spring app has some problems."
+          -d text="The weekly build of the Spring app has failed. Snyk Report and CodeQL Report are available [here]($REPORT_URL)."
