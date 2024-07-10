@@ -11,9 +11,7 @@ jobs:
   create_branch:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: write
-      security-events: write
 
     steps:
     - name: Checkout repository
