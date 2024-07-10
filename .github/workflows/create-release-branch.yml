@@ -1,0 +1,27 @@
+name: Create Release Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version'
+        required: true
+
+jobs:
+  create_branch:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: develop
+
+    - name: Create new branch
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git checkout -b release/${{ github.event.inputs.release_version }}
+        git push origin release/${{ github.event.inputs.release_version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
