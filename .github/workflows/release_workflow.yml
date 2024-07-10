@@ -37,11 +37,11 @@ jobs:
           git push origin develop
 
       - name: Send Telegram message on failure
-        if: failure()
+        if: always() #for test
         run: |
           curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage \
             -d chat_id=$TELEGRAM_CHAT_ID \
-            -d text="Merge from main to develop branch failed. Manual intervention required."
+            -d text="Merge from main to develop branch of $GITHUB_REPOSITORY failed. Manual intervention required."
 
 env:
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
