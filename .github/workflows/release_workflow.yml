@@ -1,0 +1,46 @@
+name: Release workflow
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/release_workflow.yml'
+
+jobs:
+  merge-to-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Merge main to develop
+        id: merge
+        run: |
+          git checkout develop
+          git merge main
+        continue-on-error: true
+
+      - name: Push changes
+        if: success()
+        run: |
+          git push origin develop
+
+      - name: Send Telegram message on failure
+        if: failure()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage \
+            -d chat_id=$TELEGRAM_CHAT_ID \
+            -d text="Merge from main to develop branch failed. Manual intervention required."
+
+env:
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
