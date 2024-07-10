@@ -83,7 +83,7 @@ jobs:
         id: merge
         run: |
           git checkout develop
-          git merge origin/main
+          git merge origin/main --allow-unrelated-histories
         continue-on-error: true
 
       - name: Push changes
