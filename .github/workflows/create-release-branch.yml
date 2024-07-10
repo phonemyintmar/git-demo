@@ -17,10 +17,20 @@ jobs:
       with:
         ref: develop
 
-    - name: Create new branch
+    - name: Set up Git
       run: |
+        echo "Setting up Git"
         git config --global user.name "${{ github.actor }}"
         git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Authenticate with GitHub
+      run: |
+        echo "Authenticating"
+        git remote set-url origin https://x-access-token:${{ secrets.TOKEN_GITHUB }}@github.com/${{ github.repository }}
+
+    - name: Create new branch
+      run: |
+        echo "Creating new branch release/${{ github.event.inputs.release_version }}"
         git checkout -b release/${{ github.event.inputs.release_version }}
         git push origin release/${{ github.event.inputs.release_version }}
       env:
