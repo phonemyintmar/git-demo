@@ -58,6 +58,6 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           REPORT_URL="${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}"
-          curl -s -X POST https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          curl -s -X POST https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage \
           -d chat_id=${{ env.TELEGRAM_CHAT_ID }} \
           -d text="The weekly build of the Spring app has failed. Snyk Report and CodeQL Report are available [here]($REPORT_URL)."
