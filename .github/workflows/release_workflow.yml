@@ -83,7 +83,7 @@ jobs:
         id: merge
         run: |
           git checkout develop
-          git merge main
+          git merge origin main
         continue-on-error: true
 
       - name: Push changes
