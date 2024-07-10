@@ -80,7 +80,7 @@ jobs:
   notifications:
     runs-on: ubuntu-latest
     needs: build
-    if: always()
+    if: failure()
 
     steps:
       - name: Send Telegram Notification
